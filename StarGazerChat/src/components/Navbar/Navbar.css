@@ -1,0 +1,63 @@
+nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 2rem;
+    background-color: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    border-radius: 1.5rem 1.5rem 0rem 0rem;
+}
+
+.nav-logo h1 {
+    color: #DA7756;
+    font-size: 1.5rem;
+    margin: 0;
+}
+
+.nav-links {
+    display: flex;
+    gap: 2rem;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+}
+
+.nav-links a:hover {
+    text-decoration: underline;
+    color: #DA7756;
+}
+
+.nav-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+.nav-actions button {
+    padding: 0.8rem 1.5rem;
+    border-radius: 2rem;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+   
+}
+
+.nav-actions button:first-child {
+    background: none;
+    color: #333;
+}
+
+.nav-actions button:first-child:hover {
+    background: hsl(0, 0%, 95%);
+}
+
+.nav-actions button:last-child {
+    background: linear-gradient(135deg, #DA7756, #f0a070);
+    color: white;
+}
+
+.nav-actions button:last-child:hover {
+    background: linear-gradient(135deg, #c4664a, #d98a5f);
+}
