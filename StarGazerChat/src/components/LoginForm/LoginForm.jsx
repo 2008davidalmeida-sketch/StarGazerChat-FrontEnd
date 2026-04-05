@@ -1,6 +1,40 @@
 import './LoginForm.css';
+import { useState } from 'react';
+import { login } from '../../services/auth.js';
 
 export default function LoginForm() {
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [usernameError, setUsernameError] = useState('');
+    const [passwordError, setPasswordError] = useState('');
+
+    async function handleSubmit() {
+
+        setUsernameError('');
+        setPasswordError('');
+
+        if (!username) return setUsernameError('Username is required');
+        if (!password) return setPasswordError('Password is required');
+        
+        try {
+            const response = await login(username, password);
+            console.log('Login response:', response);
+
+            if (response.token) {
+                // success
+                // redirect to chat page or save token to localStorage
+            } else if (response.message === 'User does not exist') {
+                setUsername('');
+                setUsernameError('User does not exist');
+            } else if (response.message === 'Incorrect password') {
+                setPassword('');
+                setPasswordError('Incorrect password');
+            }
+        } catch (error) {
+            console.error('Login error:', error);
+        }
+    }
+
     return (
         <div className="login-container">
             <div className="login-card">
@@ -10,13 +44,27 @@ export default function LoginForm() {
                 <div className="login-form">
                     <div className="form-group">
                         <label>Username</label>
-                        <input type="text" placeholder="Enter your username" />
+                       <input 
+                            type="text" 
+                            placeholder={usernameError || "Enter your username"}
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                            className={usernameError ? 'input-error' : ''}
+                        />
                     </div>
                     <div className="form-group">
                         <label>Password</label>
-                        <input type="password" placeholder="Enter your password" />
+                        <input 
+                            type="password" 
+                            placeholder={passwordError || "Enter your password"}
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            className={passwordError ? 'input-error' : ''}
+                        />
                     </div>
-                    <button className="login-btn">Login</button>
+                    <button className="login-btn" onClick={handleSubmit}>
+                        Login
+                    </button>
                     <p className="register-link">
                         Don't have an account? <a href="/signup">Register</a>
                     </p>
