@@ -9,7 +9,7 @@ export default function Hero() {
             <div className="hero-content">
                 <h1>Let's Connect with Your Friends in Real Time</h1>
                 <p>StarGazerChat is a real-time chat app that lets you connect with friends and family instantly.</p>
-                <button className="hero-btn" onClick={() => navigate('/register')}>Start Chatting Now</button>
+                <button className="hero-btn" onClick={() => navigate('/signup')}>Start Chatting Now</button>
             </div>
             <div className="hero-image">
                 {/* image goes here */}
