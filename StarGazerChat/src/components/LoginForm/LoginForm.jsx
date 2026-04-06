@@ -1,8 +1,15 @@
 import './LoginForm.css';
 import { useState } from 'react';
-import { login } from '../../services/auth.js';
+import { login as loginService} from '../../services/auth.js';
+import { useContext } from 'react';
+import { AuthContext } from '../../context/AuthContext.jsx';
+import { useNavigate } from 'react-router-dom';
+
+
 
 export default function LoginForm() {
+    const navigate = useNavigate();
+    const { login } = useContext(AuthContext);
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [usernameError, setUsernameError] = useState('');
@@ -17,12 +24,12 @@ export default function LoginForm() {
         if (!password) return setPasswordError('Password is required');
         
         try {
-            const response = await login(username, password);
+            const response = await loginService(username, password);
             console.log('Login response:', response);
 
-            if (response.token) {
-                // success
-                // redirect to chat page or save token to localStorage
+           if (response.token) {
+                login(response.token);
+                navigate('/chat');
             } else if (response.message === 'User does not exist') {
                 setUsername('');
                 setUsernameError('User does not exist');
