@@ -1,0 +1,143 @@
+.room-list {
+    width: 320px;
+    border-right: 1px solid #f0f0f0;
+    display: flex;
+    flex-direction: column;
+    padding: 1.5rem 0;
+}
+
+.room-list-header {
+    padding: 0 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.room-list-header h2 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #1a1a1a;
+    margin-bottom: 1rem;
+}
+
+.room-list-actions {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.room-search {
+    flex: 1;
+    padding: 0.6rem 1rem;
+    border: 1px solid #f0f0f0;
+    border-radius: 2rem;
+    font-size: 0.9rem;
+    outline: none;
+    background-color: #f9f9f9;
+    font-family: 'Inter', sans-serif;
+    width: 5%;
+}
+
+.room-add-btn {
+    width: 36px;
+    height: 36px;
+    background: white;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    font-size: 1.4rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center; 
+}
+
+.room-add-btn:hover {
+    background-color: #f0a070;
+}
+
+.addIcon {
+    width: 100%;
+    fill: #DA7756;
+}
+
+.room-list-items {
+    max-height: calc(100vh - 200px);
+    overflow-y: scroll;
+    flex: 1;
+}
+
+.room-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.room-item:hover {
+    background-color: #f9f9f9;
+}
+
+.room-avatar {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #DA7756, #f0a070);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.room-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.room-top {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.25rem;
+}
+
+.room-name {
+    font-weight: 600;
+    color: #1a1a1a;
+    font-size: 0.95rem;
+}
+
+.room-time {
+    font-size: 0.75rem;
+    color: #aaa;
+}
+
+.room-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.room-last-message {
+    font-size: 0.85rem;
+    color: #888;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 180px;
+}
+
+.room-unread {
+    background-color: #DA7756;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 0.7rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+}

@@ -1,0 +1,13 @@
+body {
+    background: linear-gradient(135deg, #DA7756, #f0a070);
+    max-height: 100vh;
+    max-height: 100vh;
+    padding: 1rem;
+}
+
+.chat-page {
+    display: flex;
+    background-color: white;
+    border-radius: 1.5rem;
+}
+    
