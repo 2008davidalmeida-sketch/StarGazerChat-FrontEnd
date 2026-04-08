@@ -11,6 +11,7 @@ export default function ChatPage() {
     const { currentUser } = useContext(AuthContext);
     const [activeView, setActiveView] = useState('chats');
     const [selectedRoom, setSelectedRoom] = useState(null);
+    const [refreshTrigger, setRefreshTrigger] = useState(0);
     const { token } = useContext(AuthContext);
 
     if (!token) {
@@ -26,10 +27,15 @@ export default function ChatPage() {
                     <RoomList
                         onRoomSelect={(room) => setSelectedRoom(room)}
                         currentUserId={currentUser?.id}
+                        refreshTrigger={refreshTrigger}
                     />
                     <ChatWindow
                         room={selectedRoom}
                         currentUserId={currentUser?.id}
+                        onRoomDelete={() => {
+                            setSelectedRoom(null);
+                            setRefreshTrigger(prev => prev + 1);
+                        }}
                     />
                 </>
                 )}

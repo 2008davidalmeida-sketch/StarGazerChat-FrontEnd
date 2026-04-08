@@ -5,7 +5,7 @@ import { searchUsers } from '../../services/users.js';
 import './RoomList.css';
 import addIcon from '../../assets/plus-circle-fill.svg';
 
-export default function RoomList({ onRoomSelect, currentUserId }) {
+export default function RoomList({ onRoomSelect, currentUserId, refreshTrigger }) {
     const { token } = useContext(AuthContext);
     const [rooms, setRooms] = useState([]);
     const [showModal, setShowModal] = useState(false);
@@ -19,7 +19,7 @@ export default function RoomList({ onRoomSelect, currentUserId }) {
             if (Array.isArray(data)) setRooms(data)
                 
         });
-    }, [token]);
+    }, [token, refreshTrigger]);
 
     useEffect(() => {
         if (!searchQuery.trim()) return setSearchResults([]);

@@ -69,6 +69,16 @@
     background-color: #f0f0f0;
 }
 
+.chat-window-actions .delete-btn {
+    border-color: #ffebef;
+    color: #e53935;
+    background-color: #fffafb;
+}
+
+.chat-window-actions .delete-btn:hover {
+    background-color: #ffebef;
+}
+
 .chat-window-messages {
     max-height: calc(100vh - 210px);
     flex: 1;
@@ -164,4 +174,41 @@
     width: 20px;
     filter: brightness(0) invert(1);
     transform: translateY(1px);
+}
+
+.chat-modal-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 0.5rem;
+}
+
+.chat-modal-actions button {
+    flex: 1;
+    padding: 0.8rem;
+    border-radius: 2rem;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.2s;
+}
+
+.chat-modal-cancel {
+    background: none;
+    border: 1px solid #e0e0e0;
+    color: #1a1a1a;
+}
+
+.chat-modal-cancel:hover {
+    background-color: #f9f9f9;
+}
+
+.chat-modal-confirm {
+    background-color: #fffafb;
+    border: 1px solid #ffebef;
+    color: #e53935;
+}
+
+.chat-modal-confirm:hover {
+    background-color: #ffebee;
 }

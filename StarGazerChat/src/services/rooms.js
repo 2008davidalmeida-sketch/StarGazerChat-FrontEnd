@@ -18,3 +18,11 @@ export async function createRoom(token, targetUsername) {
     });
     return response.json();
 }
+
+export async function deleteRoom(token, roomId) {
+    const response = await fetch(`${BASE_URL}/rooms/${roomId}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+    });
+    return response.json();
+}
