@@ -10,7 +10,7 @@ export default function Navbar() {
                 <h1>StarGazerChat</h1>
             </div>
             <div className="nav-links">
-                <a href="#">Home</a>
+                <a href="#">SG Statistics</a>
                 <a href="#">About</a>
                 <a href="#">Contact</a>
                 <a href="#">Help</a>
