@@ -46,7 +46,7 @@
     margin-right: 1rem;
     width: 55%;
     height: 400px;
-    background-color: #f0f0f0;
+    background: linear-gradient(135deg, #DA7756, #f0a070);
     border-radius: 1rem;
     display: flex;
     align-items: center;
@@ -54,7 +54,7 @@
 }
 
 .image1 {
-    width: 100%;
+    width: 98%;
     height: 100%;
     object-fit: contain;
     border-radius: 1rem;

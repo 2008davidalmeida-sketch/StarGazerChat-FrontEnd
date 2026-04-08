@@ -3,6 +3,7 @@ import { useState } from 'react';
 import Sidebar from '../../components/Sidebar/Sidebar.jsx';
 import RoomList from '../../components/RoomList/RoomList.jsx';
 import ChatWindow from '../../components/ChatWindow/ChatWindow.jsx';
+import ProfileWindow from '../../components/ProfileWindow/ProfileWindow.jsx';
 
 
 export default function ChatPage() {
@@ -14,9 +15,14 @@ export default function ChatPage() {
             <div className="chat-page">
                 <Sidebar activeView={activeView} setActiveView={setActiveView} />
                 {activeView === 'chats' && (
+                <>
                     <RoomList onRoomSelect={(room) => setSelectedRoom(room)} />
+                    <ChatWindow room={selectedRoom} />
+                </>
                 )}
-                <ChatWindow room={selectedRoom} />
+                {activeView === 'profile' && (
+                    <ProfileWindow />
+                )}
             </div>
         </div>
     );

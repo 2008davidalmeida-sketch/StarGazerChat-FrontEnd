@@ -70,7 +70,7 @@
 }
 
 .chat-window-messages {
-    max-height: calc(100vh - 200px);
+    max-height: calc(100vh - 210px);
     flex: 1;
     overflow-y: auto;
     padding: 2rem;

@@ -1,6 +1,6 @@
 import './Hero.css';
 import { useNavigate } from 'react-router-dom';
-import heroImage from '../../assets/image1.png';
+import heroImage from '../../assets/image3.png';
 
 export default function Hero() {
     const navigate = useNavigate();
@@ -13,7 +13,7 @@ export default function Hero() {
                 <button className="hero-btn" onClick={() => navigate('/signup')}>Start Chatting Now</button>
             </div>
             <div className="hero-image">
-                {/* {heroImage && <img src={heroImage} alt="Chatting Illustration" className='image1' />} */}
+                {heroImage && <img src={heroImage} alt="Chatting Illustration" className='image1' />}
             </div>
         </section>
     );

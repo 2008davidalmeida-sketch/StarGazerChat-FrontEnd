@@ -1,0 +1,115 @@
+.profile-window-wrapper {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    overflow-y: auto;
+}
+
+.profile-window-container {
+    background-color: white;
+    width: 100%;
+    max-width: 480px;
+    border-radius: 1.5rem;
+    border: 1px solid #f0f0f0;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+}
+
+.profile-window-header h2 {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #1a1a1a;
+}
+
+.profile-window-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2.5rem 2rem;
+}
+
+.profile-window-avatar {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #DA7756, #f0a070);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 4px 12px rgba(218, 119, 86, 0.3);
+}
+
+.profile-window-username {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #1a1a1a;
+    margin-bottom: 0.25rem;
+}
+
+.profile-window-bio {
+    color: #666;
+    font-size: 0.95rem;
+    text-align: center;
+    line-height: 1.5;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+    max-width: 85%;
+}
+
+.profile-window-date {
+    font-size: 0.9rem;
+    color: #aaa;
+    margin-top: 0.6rem;
+    margin-bottom: 2rem;
+}
+
+.profile-window-actions {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.profile-window-btn {
+    width: 100%;
+    padding: 0.875rem;
+    border-radius: 2rem;
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: none;
+}
+
+.profile-window-btn-outline {
+    border: 1px solid #e0e0e0;
+    color: #1a1a1a;
+}
+
+.profile-window-btn-outline:hover {
+    background-color: #f9f9f9;
+    border-color: #DA7756;
+}
+
+.profile-window-btn-danger {
+    border: 1px solid #ffebee;
+    color: #d32f2f;
+    background-color: #fffafb;
+}
+
+.profile-window-btn-danger:hover {
+    background-color: #ffebee;
+}
+
+.profile-window-divider {
+    height: 1px;
+    background-color: #f0f0f0;
+    margin: 0.5rem 0;
+}
