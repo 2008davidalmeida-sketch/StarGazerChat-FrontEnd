@@ -26,3 +26,11 @@ export async function deleteRoom(token, roomId) {
     });
     return response.json();
 }
+
+export async function updateLastSeen(token, roomId) {
+    const response = await fetch(`${BASE_URL}/rooms/${roomId}/lastSeen`, {
+        method: 'PATCH',
+        headers: { 'Authorization': `Bearer ${token}` }
+    });
+    return response.json();
+}

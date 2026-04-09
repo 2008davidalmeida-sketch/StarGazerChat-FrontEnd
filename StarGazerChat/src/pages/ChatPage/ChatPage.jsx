@@ -1,6 +1,9 @@
 import './ChatPage.css';
-import { useState, useContext } from 'react';
+import { useState, useEffect, useRef, useContext } from 'react';
 import { AuthContext } from '../../context/AuthContext.jsx';
+import { io } from 'socket.io-client';
+import { BASE_URL } from '../../config.js';
+import { updateLastSeen } from '../../services/rooms.js';
 import Sidebar from '../../components/Sidebar/Sidebar.jsx';
 import RoomList from '../../components/RoomList/RoomList.jsx';
 import ChatWindow from '../../components/ChatWindow/ChatWindow.jsx';
@@ -8,14 +11,37 @@ import ProfileWindow from '../../components/ProfileWindow/ProfileWindow.jsx';
 import { Navigate } from 'react-router-dom';
 
 export default function ChatPage() {
-    const { currentUser } = useContext(AuthContext);
+    const { token, currentUser } = useContext(AuthContext);
     const [activeView, setActiveView] = useState('chats');
     const [selectedRoom, setSelectedRoom] = useState(null);
     const [refreshTrigger, setRefreshTrigger] = useState(0);
-    const { token } = useContext(AuthContext);
+    const [rooms, setRooms] = useState([]);
+    const socketRef = useRef(null);
 
     if (!token) {
         return <Navigate to="/login" />;
+    }
+
+    useEffect(() => {
+        if (!token) return;
+
+        const socket = io(BASE_URL, { auth: { token } });
+        socketRef.current = socket;
+
+        return () => socket.disconnect();
+    }, [token]);
+
+    async function handleRoomSelect(room) {
+        setSelectedRoom(room);
+        await updateLastSeen(token, room._id);
+        setRooms(prev => prev.map(r =>
+            r._id === room._id ? { ...r, unreadCount: 0 } : r
+        ));
+    }
+
+    function handleRoomDelete(roomId) {
+        setSelectedRoom(null);
+        setRefreshTrigger(prev => prev + 1);
     }
 
     return (
@@ -25,17 +51,18 @@ export default function ChatPage() {
                 {activeView === 'chats' && (
                 <>
                     <RoomList
-                        onRoomSelect={(room) => setSelectedRoom(room)}
+                        onRoomSelect={handleRoomSelect}
                         currentUserId={currentUser?.id}
                         refreshTrigger={refreshTrigger}
+                        socket={socketRef.current}
+                        rooms={rooms}
+                        setRooms={setRooms}
                     />
                     <ChatWindow
                         room={selectedRoom}
                         currentUserId={currentUser?.id}
-                        onRoomDelete={() => {
-                            setSelectedRoom(null);
-                            setRefreshTrigger(prev => prev + 1);
-                        }}
+                        socket={socketRef.current}
+                        onRoomDelete={handleRoomDelete}
                     />
                 </>
                 )}

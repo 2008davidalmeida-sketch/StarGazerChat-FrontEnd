@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef, useContext } from 'react';
-import { io } from 'socket.io-client';
 import { AuthContext } from '../../context/AuthContext.jsx';
 import { BASE_URL } from '../../config.js';
 import { deleteRoom } from '../../services/rooms.js';
@@ -11,19 +10,25 @@ function getDisplayName(room, currentUserId) {
     return other?.username ?? room.name;
 }
 
-export default function ChatWindow({ room, currentUserId, onRoomDelete }) {
+export default function ChatWindow({ room, currentUserId, onRoomDelete, socket }) {
     const { token } = useContext(AuthContext);
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState('');
     const [showDeleteModal, setShowDeleteModal] = useState(false);
-    const socketRef = useRef(null);
     const bottomRef = useRef(null);
+    const targetUserIdRef = useRef(null);
+    const [otherStatus, setOtherStatus] = useState('offline');
+
+    useEffect(() => {
+        if (!room) return;
+        const other = room.members?.find(m => m._id !== currentUserId);
+        targetUserIdRef.current = other?._id;
+        setOtherStatus(other?.status || 'offline');
+    }, [room, currentUserId]);
 
     useEffect(() => {
         if (!room || !token) return;
-
         setMessages([]);
-
         fetch(`${BASE_URL}/messages/${room._id}`, {
             headers: { 'Authorization': `Bearer ${token}` }
         })
@@ -33,39 +38,37 @@ export default function ChatWindow({ room, currentUserId, onRoomDelete }) {
             });
     }, [room]);
 
-    // Setup socket connection once
     useEffect(() => {
-        if (!token) return;
-
-        const socket = io(BASE_URL, { auth: { token } });
-        socketRef.current = socket;
+        if (!socket) return;
 
         socket.on('newMessage', (message) => {
             setMessages(prev => [...prev, message]);
         });
 
-        return () => socket.disconnect();
-    }, [token]);
+        socket.on('userStatus', ({ userId, status }) => {
+            if (targetUserIdRef.current === userId) {
+                setOtherStatus(status);
+            }
+        });
 
-    // Join new room when selection changes
+        return () => {
+            socket.off('newMessage');
+            socket.off('userStatus');
+        };
+    }, [socket]);
+
     useEffect(() => {
-        if (!room || !socketRef.current) return;
-        socketRef.current.emit('joinRoom', room._id);
-    }, [room]);
+        if (!room || !socket) return;
+        socket.emit('joinRoom', room._id);
+    }, [room, socket]);
 
-    // Auto scroll to bottom
     useEffect(() => {
         bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
 
     function handleSend() {
-        if (!input.trim() || !room || !socketRef.current) return;
-
-        socketRef.current.emit('sendMessage', {
-            roomId: room._id,
-            content: input.trim()
-        });
-
+        if (!input.trim() || !room || !socket) return;
+        socket.emit('sendMessage', { roomId: room._id, content: input.trim() });
         setInput('');
     }
 
@@ -97,6 +100,7 @@ export default function ChatWindow({ room, currentUserId, onRoomDelete }) {
                     <div className="chat-window-avatar">{displayName.charAt(0)}</div>
                     <div>
                         <h3>{displayName}</h3>
+                        {otherStatus === 'online' && <span className="chat-window-status">● Online</span>}
                     </div>
                 </div>
                 <div className="chat-window-actions">
