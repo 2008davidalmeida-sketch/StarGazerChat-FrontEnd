@@ -1,5 +1,5 @@
 import './Sidebar.css';
-import Logo from '../../assets/logo.png';
+import Logo from '../../assets/Logo.png';
 import messageIcon from '../../assets/messageIcon.svg';
 import bellIcon from '../../assets/bell.svg';
 import trashIcon from '../../assets/trash.svg';
