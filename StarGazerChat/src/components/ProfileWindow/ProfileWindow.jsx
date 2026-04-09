@@ -1,9 +1,11 @@
 import './ProfileWindow.css';
 import { useContext } from 'react';
 import { AuthContext } from '../../context/AuthContext.jsx'; 
+import { useNavigate } from 'react-router-dom';
 
 export default function ProfileWindow() {
-    // const { logout } = useContext(AuthContext); // Uncomment when ready
+    const { logout } = useContext(AuthContext);
+    const navigate = useNavigate();
 
     // Placeholder data
     const user = {
@@ -37,7 +39,10 @@ export default function ProfileWindow() {
                         <div className="profile-window-divider"></div>
                         <button
                             className="profile-window-btn profile-window-btn-danger"
-                        // onClick={() => logout()} // Uncomment when ready
+                            onClick={() => {
+                                logout();
+                                navigate('/login');
+                            }} 
                         >
                             Log out
                         </button>

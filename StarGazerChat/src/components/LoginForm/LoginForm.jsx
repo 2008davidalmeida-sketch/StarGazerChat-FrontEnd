@@ -1,10 +1,10 @@
 import './LoginForm.css';
 import { useState } from 'react';
-import { login as loginService} from '../../services/auth.js';
+import { login as loginService } from '../../services/auth.js';
 import { useContext } from 'react';
 import { AuthContext } from '../../context/AuthContext.jsx';
 import { useNavigate } from 'react-router-dom';
-
+import { useEffect } from 'react';
 
 
 export default function LoginForm() {
@@ -14,6 +14,13 @@ export default function LoginForm() {
     const [password, setPassword] = useState('');
     const [usernameError, setUsernameError] = useState('');
     const [passwordError, setPasswordError] = useState('');
+    const { token } = useContext(AuthContext);
+
+    useEffect(() => {
+        if (token) {
+            navigate('/chat', { replace: true });
+        }
+    }, [token, navigate]);
 
     async function handleSubmit() {
 
@@ -22,12 +29,12 @@ export default function LoginForm() {
 
         if (!username) return setUsernameError('Username is required');
         if (!password) return setPasswordError('Password is required');
-        
+
         try {
             const response = await loginService(username, password);
             console.log('Login response:', response);
 
-           if (response.token) {
+            if (response.token) {
                 login(response.token);
                 navigate('/chat');
             } else if (response.message === 'User does not exist') {
@@ -51,8 +58,8 @@ export default function LoginForm() {
                 <div className="login-form">
                     <div className="form-group">
                         <label>Username</label>
-                       <input 
-                            type="text" 
+                        <input
+                            type="text"
                             placeholder={usernameError || "Enter your username"}
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
@@ -61,8 +68,8 @@ export default function LoginForm() {
                     </div>
                     <div className="form-group">
                         <label>Password</label>
-                        <input 
-                            type="password" 
+                        <input
+                            type="password"
                             placeholder={passwordError || "Enter your password"}
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
