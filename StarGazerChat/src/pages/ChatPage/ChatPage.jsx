@@ -17,16 +17,57 @@ export default function ChatPage() {
     const [refreshTrigger, setRefreshTrigger] = useState(0);
     const [rooms, setRooms] = useState([]);
     const socketRef = useRef(null);
+    const selectedRoomRef = useRef(null);
 
     if (!token) {
         return <Navigate to="/login" />;
     }
 
     useEffect(() => {
+        selectedRoomRef.current = selectedRoom;
+    }, [selectedRoom]);
+
+    useEffect(() => {
         if (!token) return;
 
         const socket = io(BASE_URL, { auth: { token } });
         socketRef.current = socket;
+
+        socket.on('connect', () => {
+            console.log('Socket connected:', socket.id);
+        });
+
+        socket.on('newMessage', (message) => {
+            console.log('New message:', message);
+            setRooms(prev => prev.map(room => {
+                if (room._id === message.room?.toString()) {
+                    return {
+                        ...room,
+                        lastMessage: message,
+                        unreadCount: selectedRoomRef.current?._id === room._id
+                            ? 0
+                            : (room.unreadCount || 0) + 1
+                    };
+                }
+                return room;
+            }));
+        });
+
+        socket.on('newRoom', (room) => {
+            console.log('newRoom received:', room);
+            setRooms(prev => {
+                const exists = prev.find(r => r._id === room._id);
+                return exists ? prev : [room, ...prev];
+            });
+        });
+
+        socket.on('roomDeleted', ({ roomId }) => {
+            console.log('roomDeleted received:', roomId);
+            setRooms(prev => prev.filter(r => r._id !== roomId.toString()));
+            if (selectedRoomRef.current?._id === roomId.toString()) {
+                setSelectedRoom(null);
+            }
+        });
 
         return () => socket.disconnect();
     }, [token]);
