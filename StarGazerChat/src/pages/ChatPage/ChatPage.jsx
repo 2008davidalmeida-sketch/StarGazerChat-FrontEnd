@@ -37,29 +37,6 @@ export default function ChatPage() {
             console.log('Socket connected:', socket.id);
         });
 
-        socket.on('newMessage', (message) => {
-            setRooms(prev => {
-                const updatedRooms = prev.map(room => {
-                    if (room._id === message.room?.toString()) {
-                        return {
-                            ...room,
-                        lastMessage: message,
-                        unreadCount: selectedRoomRef.current?._id === room._id
-                            ? 0
-                            : (room.unreadCount || 0) + 1
-                    };
-                }
-                return room;
-            });
-
-                return updatedRooms.sort((a, b) => {
-                    const timeA = a.lastMessage?.createdAt ? new Date(a.lastMessage.createdAt).getTime() : 0;
-                    const timeB = b.lastMessage?.createdAt ? new Date(b.lastMessage.createdAt).getTime() : 0;
-                    return timeB - timeA;
-                });
-            });
-        });
-
         socket.on('newRoom', (room) => {
             console.log('newRoom received:', room);
             setRooms(prev => {
@@ -105,6 +82,7 @@ export default function ChatPage() {
                         socket={socketRef.current}
                         rooms={rooms}
                         setRooms={setRooms}
+                        selectedRoom={selectedRoom}
                     />
                     <ChatWindow
                         room={selectedRoom}

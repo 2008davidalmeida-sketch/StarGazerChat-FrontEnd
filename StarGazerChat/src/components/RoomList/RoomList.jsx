@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext, useRef } from 'react';
 import { AuthContext } from '../../context/AuthContext.jsx';
 import { getRooms, createRoom } from '../../services/rooms.js';
 import { searchUsers } from '../../services/users.js';
@@ -6,11 +6,16 @@ import './RoomList.css';
 import addIcon from '../../assets/plus-circle-fill.svg';
 
 
-export default function RoomList({ onRoomSelect, currentUserId, refreshTrigger, socket, rooms, setRooms }) {
+export default function RoomList({ onRoomSelect, currentUserId, refreshTrigger, socket, rooms, setRooms, selectedRoom }) {
     const { token } = useContext(AuthContext);
     const [showModal, setShowModal] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [searchResults, setSearchResults] = useState([]);
+    const selectedRoomRef = useRef(null);
+
+    useEffect(() => {
+        selectedRoomRef.current = selectedRoom;
+    }, [selectedRoom]);
 
     useEffect(() => {
         if (!token) return;
@@ -38,7 +43,13 @@ export default function RoomList({ onRoomSelect, currentUserId, refreshTrigger, 
             setRooms(prev => {
                 const updatedRooms = prev.map(room => {
                     if (room._id === message.room?.toString()) {
-                        return { ...room, lastMessage: message };
+                        return {
+                            ...room,
+                            lastMessage: message,
+                            unreadCount: selectedRoomRef.current?._id === room._id
+                                ? 0
+                                : (room.unreadCount || 0) + 1
+                        };
                     }
                     return room;
                 });
