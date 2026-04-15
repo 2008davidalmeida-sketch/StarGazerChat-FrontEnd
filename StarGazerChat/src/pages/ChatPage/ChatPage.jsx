@@ -54,6 +54,10 @@ export default function ChatPage() {
         });
 
         socket.on('newMessage', (message) => {
+
+            console.log('newMessage received in ChatPage:', message);
+            console.log('selectedRoomRef.current:', selectedRoomRef.current);
+            
             setRooms(prev => {
                 const updatedRooms = prev.map(room => {
                     if (room._id === message.room?.toString()) {
