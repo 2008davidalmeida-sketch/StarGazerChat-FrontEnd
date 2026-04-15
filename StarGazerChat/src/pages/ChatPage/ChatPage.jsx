@@ -53,6 +53,29 @@ export default function ChatPage() {
             }
         });
 
+        socket.on('newMessage', (message) => {
+            setRooms(prev => {
+                const updatedRooms = prev.map(room => {
+                    if (room._id === message.room?.toString()) {
+                        return {
+                            ...room,
+                            lastMessage: message,
+                            unreadCount: selectedRoomRef.current?._id === room._id
+                                ? 0
+                                : (room.unreadCount || 0) + 1
+                        };
+                    }
+                    return room;    
+                });
+
+                return updatedRooms.sort((a, b) => {
+                    const timeA = a.lastMessage?.createdAt ? new Date(a.lastMessage.createdAt).getTime() : 0;
+                    const timeB = b.lastMessage?.createdAt ? new Date(b.lastMessage.createdAt).getTime() : 0;
+                    return timeB - timeA;
+                });
+            });
+        });
+
         return () => socket.disconnect();
     }, [token]);
 
