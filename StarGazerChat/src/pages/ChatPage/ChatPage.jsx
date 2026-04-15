@@ -37,7 +37,7 @@ export default function ChatPage() {
             console.log('Socket connected:', newSocket.id);
         });
 
-        socket.on('newRoom', (room) => {
+        newSocket.on('newRoom', (room) => {
             console.log('newRoom received:', room);
             setRooms(prev => {
                 const exists = prev.find(r => r._id === room._id);
@@ -45,7 +45,7 @@ export default function ChatPage() {
             });
         });
 
-        socket.on('roomDeleted', ({ roomId }) => {
+        newSocket.on('roomDeleted', ({ roomId }) => {
             console.log('roomDeleted received:', roomId);
             setRooms(prev => prev.filter(r => r._id !== roomId.toString()));
             if (selectedRoomRef.current?._id === roomId.toString()) {
