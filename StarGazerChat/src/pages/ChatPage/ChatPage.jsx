@@ -16,7 +16,7 @@ export default function ChatPage() {
     const [selectedRoom, setSelectedRoom] = useState(null);
     const [refreshTrigger, setRefreshTrigger] = useState(0);
     const [rooms, setRooms] = useState([]);
-    const socketRef = useRef(null);
+    const [socket, setSocket] = useState(null);
     const selectedRoomRef = useRef(null);
 
     if (!token) {
@@ -30,11 +30,11 @@ export default function ChatPage() {
     useEffect(() => {
         if (!token) return;
 
-        const socket = io(BASE_URL, { auth: { token } });
-        socketRef.current = socket;
+        const newSocket = io(BASE_URL, { auth: { token } });
+        setSocket(newSocket);
 
-        socket.on('connect', () => {
-            console.log('Socket connected:', socket.id);
+        newSocket.on('connect', () => {
+            console.log('Socket connected:', newSocket.id);
         });
 
         socket.on('newRoom', (room) => {
@@ -53,7 +53,7 @@ export default function ChatPage() {
             }
         });
 
-        return () => socket.disconnect();
+        return () => newSocket.disconnect();
     }, [token]);
 
     async function handleRoomSelect(room) {
@@ -79,7 +79,7 @@ export default function ChatPage() {
                         onRoomSelect={handleRoomSelect}
                         currentUserId={currentUser?.id}
                         refreshTrigger={refreshTrigger}
-                        socket={socketRef.current}
+                        socket={socket}
                         rooms={rooms}
                         setRooms={setRooms}
                         selectedRoom={selectedRoom}
@@ -87,7 +87,7 @@ export default function ChatPage() {
                     <ChatWindow
                         room={selectedRoom}
                         currentUserId={currentUser?.id}
-                        socket={socketRef.current}
+                        socket={socket}
                         onRoomDelete={handleRoomDelete}
                     />
                 </>
