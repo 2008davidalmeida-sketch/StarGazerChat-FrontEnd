@@ -39,10 +39,12 @@ export default function ChatWindow({ room, currentUserId, onRoomDelete, socket }
     }, [room]);
 
     useEffect(() => {
-        if (!socket) return;
+        if (!socket || !room) return;
 
         const handleNewMessage = (message) => {
-            setMessages(prev => [...prev, message]);
+            if (message.room?.toString() === room._id?.toString()) {
+                setMessages(prev => [...prev, message]);
+            }
         };
 
         const handleUserStatus = ({ userId, status }) => {
@@ -58,7 +60,7 @@ export default function ChatWindow({ room, currentUserId, onRoomDelete, socket }
             socket.off('newMessage', handleNewMessage);
             socket.off('userStatus', handleUserStatus);
         };
-    }, [socket]);
+    }, [socket, room]);
 
     useEffect(() => {
         if (!room || !socket) return;
