@@ -9,6 +9,16 @@ The unified application shell strictly for authenticated users.
 - **State Managed:** `activeView` (Chats vs Profile), `selectedRoom` (the active discussion), `refreshTrigger` (forced mutation hook), `rooms` (shared room array).
 - **Core Function:** Top-level glue. Handles establishing the raw `socket.io-client` connection and orchestrating state distribution across children so memory isn't fragmented or duplicated.
 
+### `EditProfilePage` (`src/pages/EditProfilePage`)
+Full-page form for updating the currently authenticated user's profile.
+- **State Managed:** `username`, `bio`, `isLoading`, `error`.
+- **Core Behavior:** Pre-populates fields by calling `GET /users/me` on mount. On submit, calls `PATCH /users/me` via `updateProfile()`. Displays backend error messages inline (e.g. "Username already taken"). Navigates back to the Profile view on success.
+
+### `ChangePasswordPage` (`src/pages/ChangePasswordPage`)
+Full-page form for changing the currently authenticated user's password.
+- **State Managed:** `currentPassword`, `newPassword`, `confirmPassword`, `error`, `success`.
+- **Core Behavior:** Client-side validates that `newPassword` and `confirmPassword` match before sending the request. Calls `PATCH /users/password` via `changePassword()`. Shows a green success message and auto-redirects after 1.5 seconds, or displays a red error if the current password is wrong.
+
 ## Components
 
 ### `ChatWindow` (`src/components/ChatWindow`)

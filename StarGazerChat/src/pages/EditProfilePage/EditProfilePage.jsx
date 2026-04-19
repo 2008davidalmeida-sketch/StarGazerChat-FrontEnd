@@ -1,7 +1,7 @@
 import { useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
-import { getMe } from '../../services/users';
+import { getMe, updateProfile } from '../../services/users';
 import './EditProfilePage.css';
 import arrowIcon from '../../assets/arrowIcon.svg';
 
@@ -12,6 +12,7 @@ export default function EditProfilePage() {
     const [username, setUsername] = useState('');
     const [bio, setBio] = useState('');
     const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState('');
 
     useEffect(() => {
         if (!token) {
@@ -30,13 +31,14 @@ export default function EditProfilePage() {
         });
     }, [token, navigate]);
 
-    const handleSubmit = (e) => {
+    async function handleSubmit(e) {
         e.preventDefault();
-        // Here we would implement the backend update call
-        // For example: await updateProfile(token, { username, bio });
-        console.log('Profile updated:', { username, bio });
-        
-        // After successful update, go back to chat page profile section
+        setError('');
+        const result = await updateProfile(token, { username, bio });
+        if (result.message) {
+            setError(result.message); // e.g. "Username already taken"
+            return;
+        }
         navigate('/chat', { state: { activeView: 'profile' } });
     };
 
@@ -94,6 +96,7 @@ export default function EditProfilePage() {
                     </div>
 
                     <div className="edit-profile-actions">
+                        {error && <p style={{ color: 'red', fontSize: '0.85rem', textAlign: 'center' }}>{error}</p>}
                         <button type="submit" className="edit-profile-btn save-btn">
                             Save Changes
                         </button>

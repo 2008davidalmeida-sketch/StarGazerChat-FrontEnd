@@ -4,6 +4,7 @@ import LoginPage from './pages/LoginPage/LoginPage.jsx';
 import SignupPage from './pages/SignupPage/SignupPage.jsx';
 import ChatPage from './pages/ChatPage/ChatPage.jsx';
 import EditProfilePage from './pages/EditProfilePage/EditProfilePage.jsx';
+import ChangePasswordPage from './pages/ChangePasswordPage/ChangePasswordPage.jsx';
 
 export default function App() {
     return (
@@ -13,6 +14,7 @@ export default function App() {
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/chat" element={<ChatPage />} />
             <Route path="/edit-profile" element={<EditProfilePage />} />
+            <Route path="/change-password" element={<ChangePasswordPage />} />
         </Routes>
     );
 }

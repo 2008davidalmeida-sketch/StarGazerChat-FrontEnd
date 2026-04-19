@@ -45,7 +45,10 @@ export default function ProfileWindow() {
                         >
                             Edit Profile
                         </button>
-                        <button className="profile-window-btn profile-window-btn-outline">
+                        <button
+                            className="profile-window-btn profile-window-btn-outline"
+                            onClick={() => navigate('/change-password')}
+                        >
                             Change Password
                         </button>
                         <button className="profile-window-btn profile-window-btn-outline">
