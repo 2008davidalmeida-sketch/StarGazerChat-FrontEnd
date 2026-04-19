@@ -5,10 +5,6 @@ import { deleteRoom } from '../../services/rooms.js';
 import './ChatWindow.css';
 import sendIcon from '../../assets/send-fill.svg';
 
-function getDisplayName(room, currentUserId) {
-    const other = room.members?.find(m => m._id !== currentUserId);
-    return other?.username ?? room.name;
-}
 
 export default function ChatWindow({ room, currentUserId, onRoomDelete, socket }) {
     const { token } = useContext(AuthContext);
@@ -22,7 +18,11 @@ export default function ChatWindow({ room, currentUserId, onRoomDelete, socket }
     // Effect 1: Refresh the other user's status when the room changes
     useEffect(() => {
         if (!room) return;
+
+        // Find the other user in the room
         const other = room.members?.find(m => m._id !== currentUserId);
+
+        // Update the target user ID and their status
         targetUserIdRef.current = other?._id;
         setOtherStatus(other?.status || 'offline');
     }, [room, currentUserId]);
@@ -31,11 +31,14 @@ export default function ChatWindow({ room, currentUserId, onRoomDelete, socket }
     useEffect(() => {
         if (!room || !token) return;
         setMessages([]);
+
+        // Fetch the complete message history from the backend
         fetch(`${BASE_URL}/messages/${room._id}`, {
             headers: { 'Authorization': `Bearer ${token}` }
         })
-            .then(r => r.json())
+            .then(r => r.json()) // Convert the response to JSON
             .then(data => {
+                // Update the messages state with the fetched data
                 if (Array.isArray(data)) setMessages(data);
             });
     }, [room]);
@@ -46,8 +49,10 @@ export default function ChatWindow({ room, currentUserId, onRoomDelete, socket }
 
         socket.on('newMessage', (message) => {
             // Append incoming message to the local state so it appears on screen instantly
-            if (message.room?.toString() === room?._id?.toString()) {
-                setMessages(prev => [...prev, message]);
+            if (message.room?.toString() === room?._id?.toString()) { // Check if the message belongs to the current room
+               
+                // Add the new message to the existing messages
+                setMessages(prev => [...prev, message]); 
             }
         });
 
@@ -59,6 +64,7 @@ export default function ChatWindow({ room, currentUserId, onRoomDelete, socket }
         });
 
         return () => {
+            // Clean up the event listeners when the component unmounts
             socket.off('newMessage');
             socket.off('userStatus');
         };
@@ -67,29 +73,48 @@ export default function ChatWindow({ room, currentUserId, onRoomDelete, socket }
     // Effect 4: Tell the backend socket server that we joined this specific room
     useEffect(() => {
         if (!room || !socket) return;
-        socket.emit('joinRoom', room._id);
+
+        // Emit the joinRoom event to the backend
+        socket.emit('joinRoom', room._id); 
+
+        // Clean up the event listeners when the component unmounts
+        return () => {
+            socket.off('joinRoom');
+        };
     }, [room, socket]);
 
     // Effect 5: Auto-scroll to the bottom of the chat view whenever messages update
     useEffect(() => {
+        // Scroll to the bottom of the chat view
         bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
 
     function handleSend() {
+        // Send the message to the backend
         if (!input.trim() || !room || !socket) return;
         socket.emit('sendMessage', { roomId: room._id, content: input.trim() });
         setInput('');
     }
 
     function handleKeyDown(e) {
+        // Send the message to the backend when the Enter key is pressed
         if (e.key === 'Enter') handleSend();
     }
 
     async function handleDelete() {
+        // Delete the room from the backend
         if (!room) return;
         await deleteRoom(token, room._id);
         setShowDeleteModal(false);
         onRoomDelete(room._id);
+    }
+
+    function getDisplayName(room, currentUserId) {
+        // Find the other user in the room
+        const other = room.members?.find(m => m._id !== currentUserId);
+        
+        // Return the other user's username or the room name if no other user is found
+        return other?.username ?? room.name;
     }
 
     if (!room) {

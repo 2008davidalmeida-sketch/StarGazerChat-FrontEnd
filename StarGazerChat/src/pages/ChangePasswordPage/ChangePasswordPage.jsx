@@ -21,13 +21,16 @@ export default function ChangePasswordPage() {
         setError('');
         setSuccess('');
 
+        // Validate that the new password and confirm password match
         if (newPassword !== confirmPassword) {
             setError('New passwords do not match.');
             return;
         }
 
+        // Call the change password service to change the user's password
         const result = await changePassword(token, { currentPassword, newPassword });
 
+        // If the password is changed successfully, display a success message and navigate to the chat page
         if (result.message === 'Password updated successfully') {
             setSuccess(result.message);
             setTimeout(() => navigate('/chat', { state: { activeView: 'profile' } }), 1500);

@@ -9,9 +9,11 @@ import ChangePasswordPage from './pages/ChangePasswordPage/ChangePasswordPage.js
 export default function App() {
     return (
         <Routes>
+            {/* Public Routes - Accessible without logging in */}
             <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
+            {/* Protected Routes - These components should check for auth tokens internally (or via a wrapper) */}
             <Route path="/chat" element={<ChatPage />} />
             <Route path="/edit-profile" element={<EditProfilePage />} />
             <Route path="/change-password" element={<ChangePasswordPage />} />

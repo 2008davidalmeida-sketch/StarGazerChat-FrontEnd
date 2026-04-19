@@ -23,17 +23,20 @@ export default function LoginForm() {
     }, [token, navigate]);
 
     async function handleSubmit() {
-
+        // Clear previous error messages
         setUsernameError('');
         setPasswordError('');
 
+        // Validate that username and password are not empty
         if (!username) return setUsernameError('Username is required');
         if (!password) return setPasswordError('Password is required');
 
         try {
+            // Call the login service to authenticate the user
             const response = await loginService(username, password);
             console.log('Login response:', response);
 
+            // If the login is successful, store the token and navigate to the chat page
             if (response.token) {
                 login(response.token);
                 navigate('/chat');

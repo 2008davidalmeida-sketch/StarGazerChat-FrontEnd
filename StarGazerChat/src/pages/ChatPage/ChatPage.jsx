@@ -31,13 +31,16 @@ export default function ChatPage() {
     useEffect(() => {
         if (!token) return;
 
+        // Connect to the socket server
         const socket = io(BASE_URL, { auth: { token } });
         socketRef.current = socket;
 
+        // Handle socket connection
         socket.on('connect', () => {
             console.log('Socket connected:', socket.id);
         });
 
+        // Handle new room event
         socket.on('newRoom', (room) => {
             console.log('newRoom received:', room);
             setRooms(prev => {
@@ -46,6 +49,7 @@ export default function ChatPage() {
             });
         });
 
+        // Handle room deleted event
         socket.on('roomDeleted', ({ roomId }) => {
             console.log('roomDeleted received:', roomId);
             setRooms(prev => prev.filter(r => r._id !== roomId.toString()));
@@ -54,21 +58,28 @@ export default function ChatPage() {
             }
         });
 
-
-
+        // Disconnect from the socket server when the component unmounts
         return () => socket.disconnect();
     }, [token]);
 
     async function handleRoomSelect(room) {
+        // Set the selected room
         setSelectedRoom(room);
+        
+        // Update the last seen time for the selected room
         await updateLastSeen(token, room._id);
+        
+        // Clear the unread count for the selected room
         setRooms(prev => prev.map(r =>
             r._id === room._id ? { ...r, unreadCount: 0 } : r
         ));
     }
 
     function handleRoomDelete(roomId) {
+        // Clear the selected room
         setSelectedRoom(null);
+        
+        // Trigger a refresh of the room list
         setRefreshTrigger(prev => prev + 1);
     }
 

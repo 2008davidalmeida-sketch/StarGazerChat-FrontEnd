@@ -9,8 +9,11 @@ export default function ProfileWindow() {
     const navigate = useNavigate();
     const [user, setUser] = useState(null);
 
+    // Fetch user data when the component mounts
     useEffect(() => {
         if (!token) return;
+
+        // Fetch user data from the backend
         getMe(token).then(data => {
             if (data._id) {
                 setUser(data);
@@ -18,6 +21,7 @@ export default function ProfileWindow() {
         });
     }, [token]);
 
+    // Display user data or loading state
     const displayUser = user || { username: 'Loading...', bio: '', createdAt: new Date() };
     
     // Format date efficiently

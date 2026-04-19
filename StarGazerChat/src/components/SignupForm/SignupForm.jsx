@@ -17,11 +17,12 @@ export default function SignupForm() {
     const [confirmPasswordError, setConfirmPasswordError] = useState('');
 
     async function handleSubmit() {
-
+        // Clear previous error messages
         setUsernameError('');
         setPasswordError('');
         setConfirmPasswordError('');
 
+        // Validate that username and password are not empty
         if (!username) return setUsernameError('Username is required');
         if (!password) return setPasswordError('Password is required');
         if (!confirmPassword) return setConfirmPasswordError('Please confirm your password');
@@ -33,22 +34,27 @@ export default function SignupForm() {
         }
 
         try {
+            // Call the register service to create a new user
             const response = await register(username, password);
             console.log('Signup response:', response);
 
+            // If the registration is successful, log in the user
             if (response.message === 'User created successfully') {
                 const loginResponse = await loginService(username, password);
                 console.log('Login response after signup:', loginResponse);
                 
+                // If the login is successful, store the token and navigate to the chat page
                 if (loginResponse.token) {
                     login(loginResponse.token);
                     navigate('/chat');
                 }
 
             } else if (response.message === 'Username already exists') {
+                // If the username already exists, clear the username and password and display an error message
                 setUsername('');
                 setUsernameError('Username already exists');
             }  else if (response.message === 'Password must be at least 6 characters') {
+                // If the password is too short, clear the password and confirm password and display an error message
                 setPassword('');
                 setConfirmPassword('');
                 setPasswordError('Password must be at least 6 characters');

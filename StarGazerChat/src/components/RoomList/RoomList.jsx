@@ -80,10 +80,13 @@ export default function RoomList({ onRoomSelect, currentUserId, refreshTrigger, 
     }, [socket]);
 
     async function handleSelectUser(user) {
+        // Create a new room with the selected user
         const room = await createRoom(token, user.username);
         setShowModal(false);
         setSearchQuery('');
         setSearchResults([]);
+        
+        // Add the new room to the list of rooms
         if (room._id) {
             setRooms(prev => {
                 const exists = prev.find(r => r._id === room._id);
@@ -94,20 +97,27 @@ export default function RoomList({ onRoomSelect, currentUserId, refreshTrigger, 
     }
 
     function getRoomDisplayName(room) {
+        // Find the other user in the room
         const other = room.members?.find(m => m._id !== currentUserId);
+        
+        // Return the other user's username or the room name if no other user is found
         return other?.username ?? room.name;
     }
 
     function getLastMessageText(room) {
+        // Return the last message text or 'No messages yet...' if no last message is found
         if (!room.lastMessage) return 'No messages yet...';
         
+        // Get the sender of the last message
         const sender = room.lastMessage.sender;
         const senderId = typeof sender === 'object' ? sender._id : sender;
         
+        // Return the last message text
         if (senderId === currentUserId) {
             return `Me: ${room.lastMessage.content}`;
         }
         
+        // Find the other user in the room
         const otherMember = room.members?.find(m => m._id === senderId);
         const name = otherMember?.username || 'User';
         return `${name}: ${room.lastMessage.content}`;
