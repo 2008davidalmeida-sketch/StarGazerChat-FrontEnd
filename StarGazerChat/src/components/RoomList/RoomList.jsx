@@ -13,10 +13,12 @@ export default function RoomList({ onRoomSelect, currentUserId, refreshTrigger, 
     const [searchResults, setSearchResults] = useState([]);
     const selectedRoomRef = useRef(null);
 
+    // Initial map of the latest selected room for socket handlers
     useEffect(() => {
         selectedRoomRef.current = selectedRoom;
     }, [selectedRoom]);
 
+    // Fetch initial chat rooms from backend when the component mounts
     useEffect(() => {
         if (!token) return;
         getRooms(token).then(data => {
@@ -26,8 +28,11 @@ export default function RoomList({ onRoomSelect, currentUserId, refreshTrigger, 
         });
     }, [token, refreshTrigger]);
 
+    // Debounced search for discovering new users
     useEffect(() => {
         if (!searchQuery.trim()) return setSearchResults([]);
+        
+        // Wait 300ms after the user stops typing before making the API request
         const timeout = setTimeout(() => {
             searchUsers(token, searchQuery).then(data => {
                 if (Array.isArray(data)) setSearchResults(data);
@@ -36,16 +41,19 @@ export default function RoomList({ onRoomSelect, currentUserId, refreshTrigger, 
         return () => clearTimeout(timeout);
     }, [searchQuery]);
 
+    // Listen to real-time incoming messages to update placeholders and unread counters
     useEffect(() => {
         if (!socket) return;
 
         const handleNewMessage = (message) => {
             setRooms(prev => {
                 const updatedRooms = prev.map(room => {
+                    // Update the local room object if the incoming message belongs here
                     if (room._id === message.room?.toString()) {
                         return {
                             ...room,
                             lastMessage: message,
+                            // If user is actively inside this room, don't increment the unread counter
                             unreadCount: selectedRoomRef.current?._id === room._id
                                 ? 0
                                 : (room.unreadCount || 0) + 1
@@ -54,7 +62,7 @@ export default function RoomList({ onRoomSelect, currentUserId, refreshTrigger, 
                     return room;
                 });
                 
-                // Sort to bring the latest active room to the top
+                // Sort the rooms array to bring the most recently active chat to the top
                 return updatedRooms.sort((a, b) => {
                     const timeA = a.lastMessage?.createdAt ? new Date(a.lastMessage.createdAt).getTime() : 0;
                     const timeB = b.lastMessage?.createdAt ? new Date(b.lastMessage.createdAt).getTime() : 0;
@@ -65,6 +73,7 @@ export default function RoomList({ onRoomSelect, currentUserId, refreshTrigger, 
 
         socket.on('newMessage', handleNewMessage);
 
+        // ALWAYS clean up listeners inside a useEffect
         return () => {
             socket.off('newMessage', handleNewMessage);
         };

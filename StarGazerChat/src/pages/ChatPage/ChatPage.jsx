@@ -76,23 +76,23 @@ export default function ChatPage() {
             <div className="chat-page">
                 <Sidebar activeView={activeView} setActiveView={setActiveView} />
                 {activeView === 'chats' && (
-                <>
-                    <RoomList
-                        onRoomSelect={handleRoomSelect}
-                        currentUserId={currentUser?.id}
-                        refreshTrigger={refreshTrigger}
-                        socket={socketRef.current}
-                        rooms={rooms}
-                        setRooms={setRooms}
-                        selectedRoom={selectedRoom}
-                    />
-                    <ChatWindow
-                        room={selectedRoom}
-                        currentUserId={currentUser?.id}
-                        socket={socketRef.current}
-                        onRoomDelete={handleRoomDelete}
-                    />
-                </>
+                    <>
+                        <RoomList
+                            onRoomSelect={handleRoomSelect}
+                            currentUserId={currentUser?.id}
+                            refreshTrigger={refreshTrigger}
+                            socket={socketRef.current}
+                            rooms={rooms}
+                            setRooms={setRooms}
+                            selectedRoom={selectedRoom}
+                        />
+                        <ChatWindow
+                            room={selectedRoom}
+                            currentUserId={currentUser?.id}
+                            socket={socketRef.current}
+                            onRoomDelete={handleRoomDelete}
+                        />
+                    </>
                 )}
                 {activeView === 'profile' && (
                     <ProfileWindow />

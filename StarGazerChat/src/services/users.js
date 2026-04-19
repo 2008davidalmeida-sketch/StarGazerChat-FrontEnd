@@ -6,3 +6,12 @@ export async function searchUsers(token, query) {
     });
     return response.json();
 }
+
+export async function getMe(token) {
+    const response = await fetch(`${BASE_URL}/users/me`, {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    });
+    return response.json();
+}

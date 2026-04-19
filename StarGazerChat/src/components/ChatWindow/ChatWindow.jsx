@@ -19,6 +19,7 @@ export default function ChatWindow({ room, currentUserId, onRoomDelete, socket }
     const targetUserIdRef = useRef(null);
     const [otherStatus, setOtherStatus] = useState('offline');
 
+    // Effect 1: Refresh the other user's status when the room changes
     useEffect(() => {
         if (!room) return;
         const other = room.members?.find(m => m._id !== currentUserId);
@@ -26,6 +27,7 @@ export default function ChatWindow({ room, currentUserId, onRoomDelete, socket }
         setOtherStatus(other?.status || 'offline');
     }, [room, currentUserId]);
 
+    // Effect 2: Fetch the complete message history from the backend whenever a new room is clicked
     useEffect(() => {
         if (!room || !token) return;
         setMessages([]);
@@ -38,35 +40,37 @@ export default function ChatWindow({ room, currentUserId, onRoomDelete, socket }
             });
     }, [room]);
 
+    // Effect 3: Listen for incoming chat messages and status updates
     useEffect(() => {
-        if (!socket || !room) return;
+        if (!socket) return;
 
-        const handleNewMessage = (message) => {
-            if (message.room?.toString() === room._id?.toString()) {
+        socket.on('newMessage', (message) => {
+            // Append incoming message to the local state so it appears on screen instantly
+            if (message.room?.toString() === room?._id?.toString()) {
                 setMessages(prev => [...prev, message]);
             }
-        };
+        });
 
-        const handleUserStatus = ({ userId, status }) => {
+        socket.on('userStatus', ({ userId, status }) => {
+            // Only update the online/offline badge if the ping belongs to the person we are actively chatting with
             if (targetUserIdRef.current === userId) {
                 setOtherStatus(status);
             }
-        };
-
-        socket.on('newMessage', handleNewMessage);
-        socket.on('userStatus', handleUserStatus);
+        });
 
         return () => {
-            socket.off('newMessage', handleNewMessage);
-            socket.off('userStatus', handleUserStatus);
+            socket.off('newMessage');
+            socket.off('userStatus');
         };
     }, [socket, room]);
 
+    // Effect 4: Tell the backend socket server that we joined this specific room
     useEffect(() => {
         if (!room || !socket) return;
         socket.emit('joinRoom', room._id);
     }, [room, socket]);
 
+    // Effect 5: Auto-scroll to the bottom of the chat view whenever messages update
     useEffect(() => {
         bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
