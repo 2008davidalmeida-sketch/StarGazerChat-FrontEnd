@@ -35,10 +35,4 @@ Display widget reflecting account statistics.
 ### Validation Overlays
 - **`LoginForm` / `SignupForm`**: Standalone widgets. Handle internal string inputs exclusively while delegating token manipulation specifically through global `auth.js` backend interceptors. 
 
----
 
-## 📝 When to Update this File
-You should update this documentation file when:
-- A new React component is generated (e.g., a Settings widget or Notification Toast UI).
-- Structural prop signatures drastically change.
-- A functional component is abstracted up or broken apart.

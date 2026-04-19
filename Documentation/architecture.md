@@ -34,10 +34,4 @@ StarGazerChat relies on `socket.io-client` for real-time messaging latency requi
 - **Hoisting:** To prevent disconnects and re-renders when navigating between chat rooms or the profile tab, the `io()` socket connection is initiated globally at the `ChatPage.jsx` layer.
 - **Prop Drilling:** The connection is passed down to `<RoomList />` (so dynamic updates natively pop chats to the top and trigger unread badges) and `<ChatWindow />` (so the UI can emit specific `sendMessage` events to unique room IDs).
 
----
 
-## 📝 When to Update this File
-You should update this documentation file when:
-- Major structural directories are added (e.g., adding Redux `/store`, or `/hooks`).
-- The WebSocket architecture changes (e.g., moving to GraphQL Subscriptions instead of Socket.io).
-- Routing patterns completely shift (e.g., implementing Next.js pages/app router).

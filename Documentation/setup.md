@@ -41,10 +41,4 @@ npm run dev
 ```
 Vite will launch the server and provide a local URL (e.g., `http://localhost:5173`). 
 
----
 
-## 📝 When to Update this File
-You should update this documentation file when:
-- The structure of the repository changes (e.g. lifting the inner `StarGazerChat` folder out to the root).
-- Complex environment variables are introduced requiring a `.env.local` configuration.
-- The Node/NPM prerequisite version is fundamentally changed or bumped.

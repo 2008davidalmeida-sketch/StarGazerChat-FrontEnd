@@ -41,10 +41,4 @@ If you developed this application purely on Windows, your local machine might ig
 However, Vercel deploys natively upon strict Linux environments. If your file is named `AuthContext.jsx` but you import it using a lowercase `c`, the build **will crash** on Vercel despite working perfectly on localhost!
 **Always ensure exact case-pairing for your import statements.**
 
----
 
-## 📝 When to Update this File
-You should update this documentation file when:
-- The hosting provider pivots from Vercel natively (e.g. transitioning over to Netlify or AWS S3 Cloudfront distributions).
-- The framework transitions (e.g. if the app is migrated from Vite exclusively into Next.js rendering the `vercel.json` routing rules historically obsolete).
-- New generic environment configurations are universally required natively before hitting the deploy button cleanly.

@@ -45,10 +45,4 @@ Fetches global generic profile descriptors isolated to identities.
   - **Endpoint Activity:** `GET /users/me`
   - **Returns:** The securely resolved object identity (`_id`, `username`, `createdAt`, `bio`) inherently attached to the JWT payload directly via local user session tokens natively.
 
----
 
-## 📝 When to Update this File
-You should update this documentation file when:
-- Backend REST API routes are modified or redefined (e.g. changing `v1/auth/`).
-- Function signatures require additional parameters (e.g. implementing Pagination query flags).
-- The internal networking framework changes entirely (e.g. migrating from generic browser `fetch` API over to lightweight wrappers like Axial or React Query configurations).
