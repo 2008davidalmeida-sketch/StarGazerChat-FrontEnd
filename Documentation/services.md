@@ -43,6 +43,14 @@ Fetches global generic profile descriptors isolated to identities.
 
 - **`getMe(token)`**
   - **Endpoint Activity:** `GET /users/me`
-  - **Returns:** The securely resolved object identity (`_id`, `username`, `createdAt`, `bio`) inherently attached to the JWT payload directly via local user session tokens natively.
+  - **Returns:** The current user object (`_id`, `username`, `bio`, `createdAt`) without the password.
+
+- **`updateProfile(token, { username, bio })`**
+  - **Endpoint Activity:** `PATCH /users/me`
+  - **Returns:** Updated user object on success, or `{ message: "Username already taken" }` if there's a conflict.
+
+- **`changePassword(token, { currentPassword, newPassword })`**
+  - **Endpoint Activity:** `PATCH /users/password`
+  - **Returns:** `{ message: "Password updated successfully" }` on success, or `{ message: "Current password is incorrect" }` on failure.
 
 
