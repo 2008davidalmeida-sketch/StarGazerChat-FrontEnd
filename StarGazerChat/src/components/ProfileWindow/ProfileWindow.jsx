@@ -39,7 +39,10 @@ export default function ProfileWindow() {
                     <p className="profile-window-date">Joined {joinDate}</p>
 
                     <div className="profile-window-actions">
-                        <button className="profile-window-btn profile-window-btn-outline">
+                        <button 
+                            className="profile-window-btn profile-window-btn-outline"
+                            onClick={() => navigate('/edit-profile')}
+                        >
                             Edit Profile
                         </button>
                         <button className="profile-window-btn profile-window-btn-outline">

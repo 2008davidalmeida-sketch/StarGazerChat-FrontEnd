@@ -8,11 +8,12 @@ import Sidebar from '../../components/Sidebar/Sidebar.jsx';
 import RoomList from '../../components/RoomList/RoomList.jsx';
 import ChatWindow from '../../components/ChatWindow/ChatWindow.jsx';
 import ProfileWindow from '../../components/ProfileWindow/ProfileWindow.jsx';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 
 export default function ChatPage() {
     const { token, currentUser } = useContext(AuthContext);
-    const [activeView, setActiveView] = useState('chats');
+    const location = useLocation();
+    const [activeView, setActiveView] = useState(location.state?.activeView || 'chats');
     const [selectedRoom, setSelectedRoom] = useState(null);
     const [refreshTrigger, setRefreshTrigger] = useState(0);
     const [rooms, setRooms] = useState([]);
