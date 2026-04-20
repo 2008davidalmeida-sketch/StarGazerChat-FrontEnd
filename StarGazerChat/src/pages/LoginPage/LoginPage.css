@@ -5,3 +5,9 @@
     justify-content: center;
    
 }
+
+@media (max-width: 768px) {
+    .login-container {
+        min-height: calc(100vh - 1rem); /* Subtract the 0.5rem body padding from top/bottom */
+    }
+}

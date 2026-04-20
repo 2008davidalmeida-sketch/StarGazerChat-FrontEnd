@@ -4,3 +4,9 @@
     align-items: center;
     justify-content: center;
 }
+
+@media (max-width: 768px) {
+    .register-container {
+        min-height: calc(100vh - 1rem);
+    }
+}

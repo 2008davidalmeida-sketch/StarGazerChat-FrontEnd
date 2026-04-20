@@ -81,3 +81,24 @@
 .input-error {
     border: 1px solid red !important;
 }
+
+@media (max-width: 768px) {
+    .login-card {
+        padding: 3rem 2rem; /* Much better for mobile screens */
+        max-width: 100%;
+        margin: 0.5rem; /* Matches the Landing Page margin */
+        border-radius: 1rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .login-card h1 {
+        font-size: 1.6rem; /* Slightly smaller header */
+        text-align: center;
+    }
+
+    .login-card p {
+        text-align: center;
+        font-size: 0.9rem;
+    }
+}
+
