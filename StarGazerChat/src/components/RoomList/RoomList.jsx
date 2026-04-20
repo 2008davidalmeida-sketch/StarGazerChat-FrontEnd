@@ -47,10 +47,12 @@ export default function RoomList({ onRoomSelect, currentUserId, refreshTrigger, 
         if (!socket) return;
 
         const handleNewMessage = (message) => {
+            const messageRoomId = message.room?.toString();
+            
             setRooms(prev => {
                 const updatedRooms = prev.map(room => {
                     // Update the local room object if the incoming message belongs here
-                    if (room._id === message.room?.toString()) {
+                    if (room._id === messageRoomId) {
                         return {
                             ...room,
                             lastMessage: message,
@@ -64,7 +66,7 @@ export default function RoomList({ onRoomSelect, currentUserId, refreshTrigger, 
                 });
                 
                 // Sort the rooms array to bring the most recently active chat to the top
-                return updatedRooms.sort((a, b) => {
+                return [...updatedRooms].sort((a, b) => {
                     const timeA = a.lastMessage?.createdAt ? new Date(a.lastMessage.createdAt).getTime() : 0;
                     const timeB = b.lastMessage?.createdAt ? new Date(b.lastMessage.createdAt).getTime() : 0;
                     return timeB - timeA;

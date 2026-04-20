@@ -47,26 +47,29 @@ export default function ChatWindow({ room, currentUserId, onRoomDelete, socket }
     useEffect(() => {
         if (!socket) return;
 
-        socket.on('newMessage', (message) => {
+        const handleNewMessage = (message) => {
             // Append incoming message to the local state so it appears on screen instantly
             if (message.room?.toString() === room?._id?.toString()) { // Check if the message belongs to the current room
                
                 // Add the new message to the existing messages
                 setMessages(prev => [...prev, message]); 
             }
-        });
+        };
 
-        socket.on('userStatus', ({ userId, status }) => {
+        const handleUserStatus = ({ userId, status }) => {
             // Only update the online/offline badge if the ping belongs to the person we are actively chatting with
             if (targetUserIdRef.current === userId) {
                 setOtherStatus(status);
             }
-        });
+        };
+
+        socket.on('newMessage', handleNewMessage);
+        socket.on('userStatus', handleUserStatus);
 
         return () => {
             // Clean up the event listeners when the component unmounts
-            socket.off('newMessage');
-            socket.off('userStatus');
+            socket.off('newMessage', handleNewMessage);
+            socket.off('userStatus', handleUserStatus);
         };
     }, [socket, room]);
 
