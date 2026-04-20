@@ -11,6 +11,7 @@ export default function RoomList({ onRoomSelect, currentUserId, refreshTrigger, 
     const [showModal, setShowModal] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [searchResults, setSearchResults] = useState([]);
+    const [roomSearchQuery, setRoomSearchQuery] = useState('');
     const selectedRoomRef = useRef(null);
 
     // Initial map of the latest selected room for socket handlers
@@ -123,12 +124,23 @@ export default function RoomList({ onRoomSelect, currentUserId, refreshTrigger, 
         return `${name}: ${room.lastMessage.content}`;
     }
 
+    // Filter rooms based on the local search query
+    const filteredRooms = rooms.filter(room => 
+        getRoomDisplayName(room).toLowerCase().includes(roomSearchQuery.toLowerCase())
+    );
+
     return (
         <div className="room-list">
             <div className="room-list-header">
                 <h2>Chat</h2>
                 <div className="room-list-actions">
-                    <input type="text" placeholder="Search..." className="room-search" />
+                    <input 
+                        type="text" 
+                        placeholder="Search..." 
+                        className="room-search" 
+                        value={roomSearchQuery}
+                        onChange={(e) => setRoomSearchQuery(e.target.value)}
+                    />
                     <button className="room-add-btn" onClick={() => setShowModal(true)}>
                         <img src={addIcon} alt="Add Room" className='addIcon'/>
                     </button>
@@ -136,7 +148,12 @@ export default function RoomList({ onRoomSelect, currentUserId, refreshTrigger, 
             </div>
 
             <div className="room-list-items">
-                {rooms.map(room => (
+                {filteredRooms.length === 0 ? (
+                    <div className="no-rooms-message" style={{ textAlign: "center", marginTop: "2rem", color: "#666" }}>
+                       {roomSearchQuery ? "No chats found." : "No chats yet. Start a new one!"}
+                    </div>
+                ) : (
+                    filteredRooms.map(room => (
                     <div
                         key={room._id}
                         className="room-item"
@@ -162,7 +179,7 @@ export default function RoomList({ onRoomSelect, currentUserId, refreshTrigger, 
                             </div>
                         </div>
                     </div>
-                ))}
+                )))}
             </div>
 
             {showModal && (
