@@ -12,13 +12,6 @@ export default function RoomList({ onRoomSelect, currentUserId, refreshTrigger, 
     const [searchQuery, setSearchQuery] = useState('');
     const [searchResults, setSearchResults] = useState([]);
     const [roomSearchQuery, setRoomSearchQuery] = useState('');
-    const selectedRoomRef = useRef(null);
-
-    // Initial map of the latest selected room for socket handlers
-    useEffect(() => {
-        selectedRoomRef.current = selectedRoom;
-    }, [selectedRoom]);
-
     // Fetch initial chat rooms from backend when the component mounts
     useEffect(() => {
         if (!token) return;
@@ -41,46 +34,6 @@ export default function RoomList({ onRoomSelect, currentUserId, refreshTrigger, 
         }, 300);
         return () => clearTimeout(timeout);
     }, [searchQuery]);
-
-    // Listen to real-time incoming messages to update placeholders and unread counters
-    useEffect(() => {
-        if (!socket) return;
-
-        const handleNewMessage = (message) => {
-            const messageRoomId = message.room?.toString();
-            
-            setRooms(prev => {
-                const updatedRooms = prev.map(room => {
-                    // Update the local room object if the incoming message belongs here
-                    if (room._id === messageRoomId) {
-                        return {
-                            ...room,
-                            lastMessage: message,
-                            // If user is actively inside this room, don't increment the unread counter
-                            unreadCount: selectedRoomRef.current?._id === room._id
-                                ? 0
-                                : (room.unreadCount || 0) + 1
-                        };
-                    }
-                    return room;
-                });
-                
-                // Sort the rooms array to bring the most recently active chat to the top
-                return [...updatedRooms].sort((a, b) => {
-                    const timeA = a.lastMessage?.createdAt ? new Date(a.lastMessage.createdAt).getTime() : 0;
-                    const timeB = b.lastMessage?.createdAt ? new Date(b.lastMessage.createdAt).getTime() : 0;
-                    return timeB - timeA;
-                });
-            });
-        };
-
-        socket.on('newMessage', handleNewMessage);
-
-        // ALWAYS clean up listeners inside a useEffect
-        return () => {
-            socket.off('newMessage', handleNewMessage);
-        };
-    }, [socket]);
 
     async function handleSelectUser(user) {
         // Create a new room with the selected user

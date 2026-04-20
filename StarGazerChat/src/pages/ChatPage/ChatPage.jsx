@@ -49,6 +49,34 @@ export default function ChatPage() {
             });
         });
 
+        // Handle incoming messages to update meta-data (previews, unread counts, sorting)
+        socket.on('newMessage', (message) => {
+            const messageRoomId = message.room?.toString();
+            
+            setRooms(prev => {
+                const updatedRooms = prev.map(room => {
+                    if (room._id === messageRoomId) {
+                        return {
+                            ...room,
+                            lastMessage: message,
+                            // If the chat window is closed or focusing another room, increment unread count
+                            unreadCount: selectedRoomRef.current?._id === room._id
+                                ? 0
+                                : (room.unreadCount || 0) + 1
+                        };
+                    }
+                    return room;
+                });
+
+                // Robust sort: Recently active chats always move to the top
+                return [...updatedRooms].sort((a, b) => {
+                    const timeA = a.lastMessage?.createdAt ? new Date(a.lastMessage.createdAt).getTime() : 0;
+                    const timeB = b.lastMessage?.createdAt ? new Date(b.lastMessage.createdAt).getTime() : 0;
+                    return timeB - timeA;
+                });
+            });
+        });
+
         // Handle room deleted event
         socket.on('roomDeleted', ({ roomId }) => {
             console.log('roomDeleted received:', roomId);
