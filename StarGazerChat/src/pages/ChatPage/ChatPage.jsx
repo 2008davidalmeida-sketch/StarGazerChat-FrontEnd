@@ -71,6 +71,9 @@ export default function ChatPage() {
         // Handle new room event
         s.on('newRoom', (room) => {
             console.log('newRoom received:', room);
+            // Auto-join the new room so we get its messages immediately
+            s.emit('joinRoom', room._id);
+            
             setRooms(prev => {
                 const exists = prev.find(r => r._id === room._id);
                 return exists ? prev : [room, ...prev];
@@ -121,6 +124,16 @@ export default function ChatPage() {
             setSocket(null);
         };
     }, [token]);
+
+    // Phase 3: Auto-Join all rooms when socket and rooms are ready
+    useEffect(() => {
+        if (!socket || rooms.length === 0) return;
+        
+        console.log('Auto-joining rooms...');
+        rooms.forEach(room => {
+            socket.emit('joinRoom', room._id);
+        });
+    }, [socket, rooms.length]); // Only run when socket connects or room count changes
 
     async function handleRoomSelect(room) {
         // Set the selected room
