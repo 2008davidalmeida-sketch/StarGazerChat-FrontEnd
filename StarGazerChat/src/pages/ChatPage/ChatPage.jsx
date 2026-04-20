@@ -3,7 +3,7 @@ import { useState, useEffect, useRef, useContext } from 'react';
 import { AuthContext } from '../../context/AuthContext.jsx';
 import { io } from 'socket.io-client';
 import { BASE_URL } from '../../config.js';
-import { updateLastSeen } from '../../services/rooms.js';
+import { getRooms, updateLastSeen } from '../../services/rooms.js';
 import Sidebar from '../../components/Sidebar/Sidebar.jsx';
 import RoomList from '../../components/RoomList/RoomList.jsx';
 import ChatWindow from '../../components/ChatWindow/ChatWindow.jsx';
@@ -24,10 +24,38 @@ export default function ChatPage() {
         return <Navigate to="/login" />;
     }
 
+    // Track the selected room in a ref for socket handlers
     useEffect(() => {
         selectedRoomRef.current = selectedRoom;
     }, [selectedRoom]);
 
+    // Phase 1: Fetch initial rooms centrally
+    useEffect(() => {
+        if (!token || !currentUser) return;
+
+        getRooms(token).then(data => {
+            console.log('Central rooms fetch:', data);
+            if (Array.isArray(data)) {
+                const processed = data.map(room => {
+                    const myMembership = room.members?.find(m => m._id === currentUser.id);
+                    const lastSeen = myMembership?.lastSeen ? new Date(myMembership.lastSeen).getTime() : 0;
+                    const lastMessageTime = room.lastMessage?.createdAt ? new Date(room.lastMessage.createdAt).getTime() : 0;
+
+                    return {
+                        ...room,
+                        unreadCount: room.unreadCount ?? (lastMessageTime > lastSeen ? 1 : 0)
+                    };
+                }).sort((a, b) => {
+                    const timeA = a.lastMessage?.createdAt ? new Date(a.lastMessage.createdAt).getTime() : 0;
+                    const timeB = b.lastMessage?.createdAt ? new Date(b.lastMessage.createdAt).getTime() : 0;
+                    return timeB - timeA;
+                });
+                setRooms(processed);
+            }
+        });
+    }, [token, refreshTrigger, currentUser]);
+
+    // Phase 2: Handle Socket Connection and Real-time messaging
     useEffect(() => {
         if (!token) return;
 
@@ -51,7 +79,8 @@ export default function ChatPage() {
 
         // Handle incoming messages to update meta-data (previews, unread counts, sorting)
         s.on('newMessage', (message) => {
-            const messageRoomId = message.room?.toString();
+            // Defensive ID extraction
+            const messageRoomId = (message.room?._id || message.room)?.toString();
             
             setRooms(prev => {
                 const updatedRooms = prev.map(room => {
@@ -59,7 +88,7 @@ export default function ChatPage() {
                         return {
                             ...room,
                             lastMessage: message,
-                            // If the chat window is closed or focusing another room, increment unread count
+                            // Increment unread unless the user is actively in this room
                             unreadCount: selectedRoomRef.current?._id === room._id
                                 ? 0
                                 : (room.unreadCount || 0) + 1
@@ -100,7 +129,7 @@ export default function ChatPage() {
         // Update the last seen time for the selected room
         await updateLastSeen(token, room._id);
         
-        // Clear the unread count for the selected room
+        // Immediate UI feedback: clear unread count for this room
         setRooms(prev => prev.map(r =>
             r._id === room._id ? { ...r, unreadCount: 0 } : r
         ));
