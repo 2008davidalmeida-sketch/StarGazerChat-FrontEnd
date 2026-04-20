@@ -17,10 +17,29 @@ export default function RoomList({ onRoomSelect, currentUserId, refreshTrigger, 
         if (!token) return;
         getRooms(token).then(data => {
             console.log('rooms fetched:', data);
-            if (Array.isArray(data)) setRooms(data)
-                
+            if (Array.isArray(data)) {
+                // Process rooms to ensure they are sorted and have unread counts
+                const processedRooms = data.map(room => {
+                    // Find the current user's membership to check lastSeen
+                    const myMembership = room.members?.find(m => m._id === currentUserId);
+                    const lastSeen = myMembership?.lastSeen ? new Date(myMembership.lastSeen).getTime() : 0;
+                    const lastMessageTime = room.lastMessage?.createdAt ? new Date(room.lastMessage.createdAt).getTime() : 0;
+
+                    return {
+                        ...room,
+                        // Calculate unreadCount if not provided by backend
+                        unreadCount: room.unreadCount ?? (lastMessageTime > lastSeen ? 1 : 0)
+                    };
+                }).sort((a, b) => {
+                    const timeA = a.lastMessage?.createdAt ? new Date(a.lastMessage.createdAt).getTime() : 0;
+                    const timeB = b.lastMessage?.createdAt ? new Date(b.lastMessage.createdAt).getTime() : 0;
+                    return timeB - timeA;
+                });
+
+                setRooms(processedRooms);
+            }
         });
-    }, [token, refreshTrigger]);
+    }, [token, refreshTrigger, currentUserId]);
 
     // Debounced search for discovering new users
     useEffect(() => {
