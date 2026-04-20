@@ -17,7 +17,7 @@ export default function ChatPage() {
     const [selectedRoom, setSelectedRoom] = useState(null);
     const [refreshTrigger, setRefreshTrigger] = useState(0);
     const [rooms, setRooms] = useState([]);
-    const socketRef = useRef(null);
+    const [socket, setSocket] = useState(null);
     const selectedRoomRef = useRef(null);
 
     if (!token) {
@@ -32,16 +32,16 @@ export default function ChatPage() {
         if (!token) return;
 
         // Connect to the socket server
-        const socket = io(BASE_URL, { auth: { token } });
-        socketRef.current = socket;
+        const s = io(BASE_URL, { auth: { token } });
+        setSocket(s);
 
         // Handle socket connection
-        socket.on('connect', () => {
-            console.log('Socket connected:', socket.id);
+        s.on('connect', () => {
+            console.log('Socket connected:', s.id);
         });
 
         // Handle new room event
-        socket.on('newRoom', (room) => {
+        s.on('newRoom', (room) => {
             console.log('newRoom received:', room);
             setRooms(prev => {
                 const exists = prev.find(r => r._id === room._id);
@@ -50,7 +50,7 @@ export default function ChatPage() {
         });
 
         // Handle incoming messages to update meta-data (previews, unread counts, sorting)
-        socket.on('newMessage', (message) => {
+        s.on('newMessage', (message) => {
             const messageRoomId = message.room?.toString();
             
             setRooms(prev => {
@@ -78,7 +78,7 @@ export default function ChatPage() {
         });
 
         // Handle room deleted event
-        socket.on('roomDeleted', ({ roomId }) => {
+        s.on('roomDeleted', ({ roomId }) => {
             console.log('roomDeleted received:', roomId);
             setRooms(prev => prev.filter(r => r._id !== roomId.toString()));
             if (selectedRoomRef.current?._id === roomId.toString()) {
@@ -87,7 +87,10 @@ export default function ChatPage() {
         });
 
         // Disconnect from the socket server when the component unmounts
-        return () => socket.disconnect();
+        return () => {
+            s.disconnect();
+            setSocket(null);
+        };
     }, [token]);
 
     async function handleRoomSelect(room) {
@@ -121,7 +124,7 @@ export default function ChatPage() {
                             onRoomSelect={handleRoomSelect}
                             currentUserId={currentUser?.id}
                             refreshTrigger={refreshTrigger}
-                            socket={socketRef.current}
+                            socket={socket}
                             rooms={rooms}
                             setRooms={setRooms}
                             selectedRoom={selectedRoom}
@@ -129,7 +132,7 @@ export default function ChatPage() {
                         <ChatWindow
                             room={selectedRoom}
                             currentUserId={currentUser?.id}
-                            socket={socketRef.current}
+                            socket={socket}
                             onRoomDelete={handleRoomDelete}
                         />
                     </>
