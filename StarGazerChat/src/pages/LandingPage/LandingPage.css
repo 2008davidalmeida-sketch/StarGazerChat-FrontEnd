@@ -4,3 +4,15 @@
     border-radius: 1.5rem;
     min-height: 95vh;
 }
+
+@media (max-width: 768px) {
+    .landing-container {
+        margin: 0; /* Let the body padding handle the spacing */
+        border-radius: 1rem;
+        min-height: calc(100vh - 1rem);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden; /* CRITICAL: Ensures content doesn't cover rounded corners */
+        margin-bottom: 1rem;
+    }
+}

@@ -11,3 +11,14 @@ body {
     padding: 0;
     box-sizing: border-box;
 }
+
+@media (max-width: 768px) {
+    body {
+        padding: 0.5rem; /* Consistent frame around the white box */
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;    
+        margin-bottom: 1rem;
+    }
+}
+
